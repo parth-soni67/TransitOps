@@ -32,6 +32,8 @@ Thumbs.db
 
 # ── PostgreSQL local binaries (bundled pgsql folder) ──────
 pgsql/
+*.zip
+postgres-binaries.zip
 
 # ── Vite / React cache ────────────────────────────────────
 .vite/

@@ -83,17 +83,56 @@ export default function Expenses() {
   };
 
   if (loading) {
-    return <div className="flex justify-center py-12"><span className="material-symbols-outlined animate-spin text-3xl text-teal-600">sync</span></div>;
+    return (
+      <div className="flex items-center justify-center py-12">
+        <span className="material-symbols-outlined animate-spin text-3xl text-accent glow-text">sync</span>
+      </div>
+    );
   }
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <p className="text-sm text-slate-500">Track fuel consumption, tollage, and operational expenses per vehicle.</p>
+        <div>
+          <p className="text-sm text-slate-450">Track fuel consumption, tollage, and operational expenses per vehicle.</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => {
+              setFuelVehicleId('');
+              setFuelLiters('');
+              setFuelCost('');
+              setFuelDate(new Date().toISOString().split('T')[0]);
+              setFuelError('');
+              setFuelSuccess('');
+              setIsFuelModalOpen(true);
+            }}
+            className="bg-accent hover:bg-accent-hover text-slate-950 font-bold px-4 py-2 rounded-lg text-sm transition-all duration-200 shadow-lg shadow-accent/25 flex items-center justify-center gap-1.5 hover:scale-[1.02]"
+          >
+            <span className="material-symbols-outlined font-bold text-lg">local_gas_station</span>
+            Log Fuel
+          </button>
+          <button
+            onClick={() => {
+              setExpVehicleId('');
+              setExpCategory('Toll');
+              setExpAmount('');
+              setExpDate(new Date().toISOString().split('T')[0]);
+              setExpNotes('');
+              setExpError('');
+              setExpSuccess('');
+              setIsExpenseModalOpen(true);
+            }}
+            className="bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 font-bold px-4 py-2 rounded-lg text-sm transition-all duration-200 shadow-md flex items-center justify-center gap-1.5 hover:scale-[1.02]"
+          >
+            <span className="material-symbols-outlined font-bold text-lg">payments</span>
+            Log Expense
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-slate-200">
+      <div className="border-b border-slate-900">
         <div className="flex gap-1">
           {[
             { key: 'fuel', label: 'Fuel Logs', icon: 'local_gas_station' },
@@ -103,7 +142,7 @@ export default function Expenses() {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`flex items-center gap-1.5 px-4 py-3 text-sm font-semibold border-b-2 transition-colors ${activeTab === tab.key ? 'border-teal-500 text-teal-600' : 'border-transparent text-slate-400 hover:text-slate-600'}`}
+              className={`flex items-center gap-1.5 px-4 py-3 text-sm font-semibold border-b-2 transition-colors ${activeTab === tab.key ? 'border-accent text-accent' : 'border-transparent text-slate-400 hover:text-slate-300'}`}
             >
               <span className="material-symbols-outlined text-base">{tab.icon}</span>
               {tab.label}
@@ -115,13 +154,13 @@ export default function Expenses() {
       {/* Fuel Logs */}
       {activeTab === 'fuel' && (
         fuelLogs.length === 0 ? (
-          <div className="bg-white border border-slate-200 text-center py-12 rounded-xl text-slate-500">No fuel logs recorded yet.</div>
+          <div className="bg-slate-950/20 border border-slate-800 text-center py-12 rounded-xl text-slate-500 font-medium">No fuel logs recorded yet.</div>
         ) : (
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="glass-panel border border-slate-800/80 rounded-2xl shadow-xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-50 text-slate-500 border-b border-slate-200 font-semibold">
+                  <tr className="bg-slate-900/60 text-slate-400 border-b border-slate-800 font-semibold">
                     <th className="p-4">Vehicle</th>
                     <th className="p-4">Date</th>
                     <th className="p-4">Liters</th>
@@ -129,17 +168,17 @@ export default function Expenses() {
                     <th className="p-4">Per Liter</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-900">
                   {fuelLogs.map(f => (
-                    <tr key={f.id} className="hover:bg-slate-50/50 transition-colors">
+                    <tr key={f.id} className="hover:bg-slate-900/35 transition-colors">
                       <td className="p-4">
-                        <div className="font-semibold text-slate-800">{f.vehicle_name}</div>
-                        <div className="text-xs font-mono text-slate-400">{f.registration_number}</div>
+                        <div className="font-semibold text-white">{f.vehicle_name}</div>
+                        <div className="text-xs font-mono text-slate-500">{f.registration_number}</div>
                       </td>
-                      <td className="p-4 text-slate-600">{new Date(f.date).toLocaleDateString()}</td>
-                      <td className="p-4 font-medium text-slate-700">{f.liters} L</td>
-                      <td className="p-4 font-semibold text-slate-800">${Number(f.cost).toFixed(2)}</td>
-                      <td className="p-4 text-slate-500">${(Number(f.cost) / Number(f.liters)).toFixed(2)}/L</td>
+                      <td className="p-4 text-slate-400">{new Date(f.date).toLocaleDateString()}</td>
+                      <td className="p-4 font-medium text-slate-200">{f.liters} L</td>
+                      <td className="p-4 font-semibold text-accent">₹{Number(f.cost).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                      <td className="p-4 text-slate-500">₹{(Number(f.cost) / Number(f.liters)).toFixed(2)}/L</td>
                     </tr>
                   ))}
                 </tbody>
@@ -152,13 +191,13 @@ export default function Expenses() {
       {/* Other Expenses */}
       {activeTab === 'other' && (
         otherExpenses.length === 0 ? (
-          <div className="bg-white border border-slate-200 text-center py-12 rounded-xl text-slate-500">No expenses recorded yet.</div>
+          <div className="bg-slate-950/20 border border-slate-800 text-center py-12 rounded-xl text-slate-500 font-medium">No expenses recorded yet.</div>
         ) : (
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="glass-panel border border-slate-800/80 rounded-2xl shadow-xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-50 text-slate-500 border-b border-slate-200 font-semibold">
+                  <tr className="bg-slate-900/60 text-slate-400 border-b border-slate-800 font-semibold">
                     <th className="p-4">Vehicle</th>
                     <th className="p-4">Category</th>
                     <th className="p-4">Date</th>
@@ -166,17 +205,21 @@ export default function Expenses() {
                     <th className="p-4">Notes</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-900">
                   {otherExpenses.map(e => (
-                    <tr key={e.id} className="hover:bg-slate-50/50 transition-colors">
+                    <tr key={e.id} className="hover:bg-slate-900/35 transition-colors">
                       <td className="p-4">
-                        <div className="font-semibold text-slate-800">{e.vehicle_name}</div>
-                        <div className="text-xs font-mono text-slate-400">{e.registration_number}</div>
+                        <div className="font-semibold text-white">{e.vehicle_name}</div>
+                        <div className="text-xs font-mono text-slate-500">{e.registration_number}</div>
                       </td>
-                      <td className="p-4"><span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200">{e.category}</span></td>
-                      <td className="p-4 text-slate-600">{new Date(e.date).toLocaleDateString()}</td>
-                      <td className="p-4 font-semibold text-slate-800">${Number(e.amount).toFixed(2)}</td>
-                      <td className="p-4 text-slate-500 text-xs truncate max-w-[150px]">{e.notes || '—'}</td>
+                      <td className="p-4">
+                        <span className="px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 text-xs font-semibold border border-slate-700">
+                          {e.category}
+                        </span>
+                      </td>
+                      <td className="p-4 text-slate-400">{new Date(e.date).toLocaleDateString()}</td>
+                      <td className="p-4 font-semibold text-accent">₹{Number(e.amount).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                      <td className="p-4 text-slate-400 text-xs truncate max-w-[150px]">{e.notes || '—'}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -189,13 +232,13 @@ export default function Expenses() {
       {/* Cost Rollup */}
       {activeTab === 'rollup' && (
         costRollup.length === 0 ? (
-          <div className="bg-white border border-slate-200 text-center py-12 rounded-xl text-slate-500">No vehicles with operational cost data yet.</div>
+          <div className="bg-slate-950/20 border border-slate-800 text-center py-12 rounded-xl text-slate-500 font-medium">No vehicles with operational cost data yet.</div>
         ) : (
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="glass-panel border border-slate-800/80 rounded-2xl shadow-xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-50 text-slate-500 border-b border-slate-200 font-semibold">
+                  <tr className="bg-slate-900/60 text-slate-400 border-b border-slate-800 font-semibold">
                     <th className="p-4">Vehicle</th>
                     <th className="p-4">Fuel Cost</th>
                     <th className="p-4">Maintenance</th>
@@ -204,18 +247,18 @@ export default function Expenses() {
                     <th className="p-4">Acquisition</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-900">
                   {costRollup.map(v => (
-                    <tr key={v.id} className="hover:bg-slate-50/50 transition-colors">
+                    <tr key={v.id} className="hover:bg-slate-900/35 transition-colors">
                       <td className="p-4">
-                        <div className="font-semibold text-slate-800">{v.name_model}</div>
-                        <div className="text-xs font-mono text-slate-400">{v.registration_number}</div>
+                        <div className="font-semibold text-white">{v.name_model}</div>
+                        <div className="text-xs font-mono text-slate-500">{v.registration_number}</div>
                       </td>
-                      <td className="p-4 text-slate-700">${Number(v.total_fuel_cost).toLocaleString()}</td>
-                      <td className="p-4 text-slate-700">${Number(v.total_maintenance_cost).toLocaleString()}</td>
-                      <td className="p-4 text-slate-700">${Number(v.total_other_expense_cost).toLocaleString()}</td>
-                      <td className="p-4 font-bold text-slate-900">${Number(v.total_operational_cost).toLocaleString()}</td>
-                      <td className="p-4 text-slate-500">${Number(v.acquisition_cost).toLocaleString()}</td>
+                      <td className="p-4 text-slate-300">₹{Number(v.total_fuel_cost).toLocaleString()}</td>
+                      <td className="p-4 text-slate-300">₹{Number(v.total_maintenance_cost).toLocaleString()}</td>
+                      <td className="p-4 text-slate-300">₹{Number(v.total_other_expense_cost).toLocaleString()}</td>
+                      <td className="p-4 font-bold text-accent">₹{Number(v.total_operational_cost).toLocaleString()}</td>
+                      <td className="p-4 text-slate-500">₹{Number(v.acquisition_cost).toLocaleString()}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -227,39 +270,41 @@ export default function Expenses() {
 
       {/* Fuel Modal */}
       {isFuelModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full overflow-hidden border border-slate-200">
-            <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
-              <h3 className="font-bold text-slate-800 text-base">Log Fuel Fill-Up</h3>
-              <button onClick={() => setIsFuelModalOpen(false)} className="text-slate-400 hover:text-slate-600"><span className="material-symbols-outlined">close</span></button>
+        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="bg-slate-950 border border-slate-800 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden flex flex-col">
+            <div className="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/40">
+              <h3 className="font-bold text-white text-base">Log Fuel Fill-Up</h3>
+              <button onClick={() => setIsFuelModalOpen(false)} className="text-slate-500 hover:text-slate-300">
+                <span className="material-symbols-outlined">close</span>
+              </button>
             </div>
-            <form onSubmit={handleFuelSubmit} className="p-6 space-y-4">
-              {fuelError && <div className="bg-red-50 text-red-700 text-xs p-3 rounded-lg border border-red-100">{fuelError}</div>}
-              {fuelSuccess && <div className="bg-emerald-50 text-emerald-700 text-xs p-3 rounded-lg border border-emerald-100">{fuelSuccess}</div>}
+            <form onSubmit={handleFuelSubmit} className="p-6 space-y-4 text-slate-350">
+              {fuelError && <div className="bg-red-500/5 text-red-400 text-xs p-3 rounded-lg border border-red-500/20">{fuelError}</div>}
+              {fuelSuccess && <div className="bg-emerald-500/5 text-emerald-400 text-xs p-3 rounded-lg border border-emerald-500/20">{fuelSuccess}</div>}
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Vehicle *</label>
-                <select value={fuelVehicleId} onChange={(e) => setFuelVehicleId(e.target.value)} className="w-full rounded-lg border-slate-200 text-sm focus:border-teal-500 focus:ring-teal-500" required>
+                <label className="block text-xs font-semibold text-slate-400 mb-1">Vehicle *</label>
+                <select value={fuelVehicleId} onChange={(e) => setFuelVehicleId(e.target.value)} className="w-full rounded-lg border-slate-800 text-sm focus:border-accent focus:ring-accent" required>
                   <option value="">Select Vehicle</option>
                   {vehicles.map(v => <option key={v.id} value={v.id}>{v.name_model} ({v.registration_number})</option>)}
                 </select>
               </div>
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Liters *</label>
-                  <input type="number" value={fuelLiters} onChange={(e) => setFuelLiters(e.target.value)} placeholder="e.g. 80" className="w-full rounded-lg border-slate-200 text-sm focus:border-teal-500 focus:ring-teal-500" required />
+                  <label className="block text-xs font-semibold text-slate-400 mb-1">Liters *</label>
+                  <input type="number" value={fuelLiters} onChange={(e) => setFuelLiters(e.target.value)} placeholder="e.g. 80" className="w-full rounded-lg border-slate-800 text-sm focus:border-accent focus:ring-accent" required />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Total Cost ($) *</label>
-                  <input type="number" value={fuelCost} onChange={(e) => setFuelCost(e.target.value)} placeholder="e.g. 120" className="w-full rounded-lg border-slate-200 text-sm focus:border-teal-500 focus:ring-teal-500" required />
+                  <label className="block text-xs font-semibold text-slate-400 mb-1">Total Cost (₹) *</label>
+                  <input type="number" value={fuelCost} onChange={(e) => setFuelCost(e.target.value)} placeholder="e.g. 8000" className="w-full rounded-lg border-slate-800 text-sm focus:border-accent focus:ring-accent" required />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Date *</label>
-                  <input type="date" value={fuelDate} onChange={(e) => setFuelDate(e.target.value)} className="w-full rounded-lg border-slate-200 text-sm focus:border-teal-500 focus:ring-teal-500" required />
+                  <label className="block text-xs font-semibold text-slate-400 mb-1">Date *</label>
+                  <input type="date" value={fuelDate} onChange={(e) => setFuelDate(e.target.value)} className="w-full rounded-lg border-slate-800 text-sm focus:border-accent focus:ring-accent" required />
                 </div>
               </div>
-              <div className="pt-4 border-t border-slate-200 flex justify-end gap-2">
-                <button type="button" onClick={() => setIsFuelModalOpen(false)} className="px-4 py-2 border border-slate-200 text-slate-600 text-sm font-semibold rounded-lg hover:bg-slate-50 transition-colors">Cancel</button>
-                <button type="submit" className="px-4 py-2 bg-teal-500 hover:bg-teal-400 text-slate-950 text-sm font-bold rounded-lg transition-colors">Save</button>
+              <div className="pt-4 border-t border-slate-850 flex justify-end gap-2">
+                <button type="button" onClick={() => setIsFuelModalOpen(false)} className="px-4 py-2 border border-slate-800 text-slate-400 text-sm font-semibold rounded-lg hover:bg-slate-900 transition-colors">Cancel</button>
+                <button type="submit" className="px-4 py-2 bg-accent hover:bg-accent-hover text-slate-950 text-sm font-bold rounded-lg transition-colors shadow-lg shadow-accent/25">Save Logs</button>
               </div>
             </form>
           </div>
@@ -268,26 +313,28 @@ export default function Expenses() {
 
       {/* Other Expense Modal */}
       {isExpenseModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full overflow-hidden border border-slate-200">
-            <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
-              <h3 className="font-bold text-slate-800 text-base">Log Operational Expense</h3>
-              <button onClick={() => setIsExpenseModalOpen(false)} className="text-slate-400 hover:text-slate-600"><span className="material-symbols-outlined">close</span></button>
+        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="bg-slate-950 border border-slate-800 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden flex flex-col">
+            <div className="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/40">
+              <h3 className="font-bold text-white text-base">Log Operational Expense</h3>
+              <button onClick={() => setIsExpenseModalOpen(false)} className="text-slate-500 hover:text-slate-300">
+                <span className="material-symbols-outlined">close</span>
+              </button>
             </div>
-            <form onSubmit={handleExpenseSubmit} className="p-6 space-y-4">
-              {expError && <div className="bg-red-50 text-red-700 text-xs p-3 rounded-lg border border-red-100">{expError}</div>}
-              {expSuccess && <div className="bg-emerald-50 text-emerald-700 text-xs p-3 rounded-lg border border-emerald-100">{expSuccess}</div>}
+            <form onSubmit={handleExpenseSubmit} className="p-6 space-y-4 text-slate-350">
+              {expError && <div className="bg-red-500/5 text-red-400 text-xs p-3 rounded-lg border border-red-500/20">{expError}</div>}
+              {expSuccess && <div className="bg-emerald-500/5 text-emerald-400 text-xs p-3 rounded-lg border border-emerald-500/20">{expSuccess}</div>}
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Vehicle *</label>
-                <select value={expVehicleId} onChange={(e) => setExpVehicleId(e.target.value)} className="w-full rounded-lg border-slate-200 text-sm focus:border-teal-500 focus:ring-teal-500" required>
+                <label className="block text-xs font-semibold text-slate-400 mb-1">Vehicle *</label>
+                <select value={expVehicleId} onChange={(e) => setExpVehicleId(e.target.value)} className="w-full rounded-lg border-slate-800 text-sm focus:border-accent focus:ring-accent" required>
                   <option value="">Select Vehicle</option>
                   {vehicles.map(v => <option key={v.id} value={v.id}>{v.name_model} ({v.registration_number})</option>)}
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Category *</label>
-                  <select value={expCategory} onChange={(e) => setExpCategory(e.target.value)} className="w-full rounded-lg border-slate-200 text-sm focus:border-teal-500 focus:ring-teal-500">
+                  <label className="block text-xs font-semibold text-slate-400 mb-1">Category *</label>
+                  <select value={expCategory} onChange={(e) => setExpCategory(e.target.value)} className="w-full rounded-lg border-slate-800 text-sm focus:border-accent focus:ring-accent">
                     <option value="Toll">Toll</option>
                     <option value="Parking">Parking</option>
                     <option value="Insurance">Insurance</option>
@@ -297,21 +344,21 @@ export default function Expenses() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Amount ($) *</label>
-                  <input type="number" value={expAmount} onChange={(e) => setExpAmount(e.target.value)} placeholder="e.g. 85" className="w-full rounded-lg border-slate-200 text-sm focus:border-teal-500 focus:ring-teal-500" required />
+                  <label className="block text-xs font-semibold text-slate-400 mb-1">Amount (₹) *</label>
+                  <input type="number" value={expAmount} onChange={(e) => setExpAmount(e.target.value)} placeholder="e.g. 850" className="w-full rounded-lg border-slate-800 text-sm focus:border-accent focus:ring-accent" required />
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Date *</label>
-                <input type="date" value={expDate} onChange={(e) => setExpDate(e.target.value)} className="w-full rounded-lg border-slate-200 text-sm focus:border-teal-500 focus:ring-teal-500" required />
+                <label className="block text-xs font-semibold text-slate-400 mb-1">Date *</label>
+                <input type="date" value={expDate} onChange={(e) => setExpDate(e.target.value)} className="w-full rounded-lg border-slate-800 text-sm focus:border-accent focus:ring-accent" required />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Notes</label>
-                <input type="text" value={expNotes} onChange={(e) => setExpNotes(e.target.value)} placeholder="Optional description..." className="w-full rounded-lg border-slate-200 text-sm focus:border-teal-500 focus:ring-teal-500" />
+                <label className="block text-xs font-semibold text-slate-400 mb-1">Notes</label>
+                <input type="text" value={expNotes} onChange={(e) => setExpNotes(e.target.value)} placeholder="Optional description..." className="w-full rounded-lg border-slate-800 text-sm focus:border-accent focus:ring-accent" />
               </div>
-              <div className="pt-4 border-t border-slate-200 flex justify-end gap-2">
-                <button type="button" onClick={() => setIsExpenseModalOpen(false)} className="px-4 py-2 border border-slate-200 text-slate-600 text-sm font-semibold rounded-lg hover:bg-slate-50 transition-colors">Cancel</button>
-                <button type="submit" className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-sm font-bold rounded-lg transition-colors">Save</button>
+              <div className="pt-4 border-t border-slate-850 flex justify-end gap-2">
+                <button type="button" onClick={() => setIsExpenseModalOpen(false)} className="px-4 py-2 border border-slate-800 text-slate-400 text-sm font-semibold rounded-lg hover:bg-slate-900 transition-colors">Cancel</button>
+                <button type="submit" className="px-4 py-2 bg-accent hover:bg-accent-hover text-slate-950 text-sm font-bold rounded-lg transition-colors shadow-lg shadow-accent/25">Save Expenses</button>
               </div>
             </form>
           </div>

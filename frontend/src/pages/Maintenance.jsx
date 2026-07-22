@@ -151,11 +151,11 @@ export default function Maintenance() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <p className="text-sm text-slate-500">Track vehicle maintenance intervals, service costs, and shop status.</p>
+        <p className="text-sm text-slate-400">Track vehicle maintenance intervals, service costs, and shop status.</p>
         {isManager && (
           <button
             onClick={openModal}
-            className="w-full sm:w-auto bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold px-4 py-2.5 rounded-lg text-sm transition-colors shadow-lg shadow-teal-500/20 flex items-center justify-center gap-1.5"
+            className="w-full sm:w-auto bg-accent hover:bg-accent-hover text-slate-950 font-bold px-4 py-2.5 rounded-lg text-sm transition-all duration-200 shadow-lg shadow-accent/25 flex items-center justify-center gap-1.5 hover:scale-[1.02]"
           >
             <span className="material-symbols-outlined font-bold text-lg">add</span>
             Open Maintenance Log
@@ -164,13 +164,13 @@ export default function Maintenance() {
       </div>
 
       {/* Filter */}
-      <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm flex flex-wrap gap-4 items-center">
+      <div className="bg-slate-950/40 border border-slate-900 rounded-xl p-4 shadow-md flex flex-wrap gap-4 items-center glass-panel">
         <div className="flex-1 min-w-[200px]">
-          <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Status</label>
+          <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Status</label>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="w-full rounded-lg border-slate-200 text-sm focus:border-teal-500 focus:ring-teal-500"
+            className="w-full rounded-lg border-slate-800 text-sm text-slate-350 focus:border-accent focus:ring-accent"
           >
             <option value="">All</option>
             <option value="active">Active (In Shop)</option>
@@ -181,17 +181,21 @@ export default function Maintenance() {
 
       {/* Table */}
       {loading ? (
-        <div className="flex justify-center py-12"><span className="material-symbols-outlined animate-spin text-3xl text-teal-600">sync</span></div>
+        <div className="flex justify-center py-12">
+          <span className="material-symbols-outlined animate-spin text-3xl text-accent glow-text">sync</span>
+        </div>
       ) : error ? (
-        <div className="bg-red-50 text-red-700 p-4 rounded-lg border border-red-100">{error}</div>
+        <div className="bg-red-500/10 text-red-400 p-4 rounded-lg border border-red-500/20">{error}</div>
       ) : logs.length === 0 ? (
-        <div className="bg-white border border-slate-200 text-center py-12 rounded-xl text-slate-500">No maintenance records found.</div>
+        <div className="bg-slate-950/20 border border-slate-800 text-center py-12 rounded-xl text-slate-500 font-medium">
+          No maintenance records found.
+        </div>
       ) : (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="glass-panel border border-slate-800/80 rounded-2xl shadow-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-sm">
               <thead>
-                <tr className="bg-slate-50 text-slate-500 border-b border-slate-200 font-semibold">
+                <tr className="bg-slate-900/60 text-slate-400 border-b border-slate-800 font-semibold">
                   <th className="p-4">Vehicle</th>
                   <th className="p-4">Description</th>
                   <th className="p-4">Date</th>
@@ -200,41 +204,39 @@ export default function Maintenance() {
                   {isManager && <th className="p-4 text-right">Actions</th>}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-900">
                 {logs.map((log) => (
-                  <tr key={log.id} className="hover:bg-slate-50/50 transition-colors">
+                  <tr key={log.id} className="hover:bg-slate-900/35 transition-colors">
                     <td className="p-4">
-                      <div className="font-semibold text-slate-800">{log.vehicle_name}</div>
-                      <div className="text-xs font-mono text-slate-400">{log.registration_number}</div>
+                      <div className="font-semibold text-white">{log.vehicle_name}</div>
+                      <div className="text-xs font-mono text-slate-500">{log.registration_number}</div>
                     </td>
-                    <td className="p-4 text-slate-700 max-w-xs">
+                    <td className="p-4 text-slate-300 max-w-xs">
                       <p className="truncate">{log.description}</p>
                     </td>
-                    <td className="p-4 text-slate-600">{new Date(log.date).toLocaleDateString()}</td>
-                    <td className="p-4 font-semibold text-slate-800">₹{Number(log.cost).toLocaleString()}</td>
+                    <td className="p-4 text-slate-400">{new Date(log.date).toLocaleDateString()}</td>
+                    <td className="p-4 font-semibold text-accent">₹{Number(log.cost).toLocaleString()}</td>
                     <td className="p-4">
-                      <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full border ${log.status === 'active' ? 'bg-amber-100 text-amber-800 border-amber-200' : 'bg-emerald-100 text-emerald-800 border-emerald-200'}`}>
+                      <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full border ${log.status === 'active' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'}`}>
                         {log.status === 'active' ? 'In Shop' : 'Closed'}
                       </span>
                     </td>
                     {isManager && (
                       <td className="p-4 text-right">
                         <div className="flex items-center justify-end gap-2">
-                          {/* Edit button — always visible for admin */}
                           <button
                             onClick={() => openEdit(log)}
-                            className="text-xs font-bold text-teal-700 hover:text-teal-800 bg-teal-50 hover:bg-teal-100 border border-teal-200 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"
+                            className="text-xs font-bold text-accent hover:text-accent-hover bg-accent/5 hover:bg-accent/10 border border-accent/20 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"
                           >
-                            <span className="material-symbols-outlined text-sm">edit</span>
+                            <span className="material-symbols-outlined text-sm font-bold">edit</span>
                             Edit
                           </button>
-                          {/* Close log button — only for active */}
                           {log.status === 'active' && (
                             <button
                               onClick={() => handleClose(log.id)}
-                              className="text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"
+                              className="text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg transition-all duration-200 flex items-center gap-1 hover:scale-[1.02] shadow-md shadow-emerald-600/20"
                             >
-                              <span className="material-symbols-outlined text-sm">check_circle</span>
+                              <span className="material-symbols-outlined text-sm font-bold">check_circle</span>
                               Close Log
                             </button>
                           )}
@@ -251,27 +253,29 @@ export default function Maintenance() {
 
       {/* ── Create Modal ── */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full overflow-hidden border border-slate-200">
-            <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="bg-slate-950 border border-slate-800 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden flex flex-col">
+            <div className="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/40">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-teal-50 rounded-lg flex items-center justify-center">
-                  <span className="material-symbols-outlined text-teal-600 text-base">build</span>
+                <div className="w-8 h-8 bg-accent/10 rounded-lg flex items-center justify-center border border-accent/20">
+                  <span className="material-symbols-outlined text-accent text-base font-bold">build</span>
                 </div>
-                <h3 className="font-bold text-slate-800 text-base">Open Maintenance Work Order</h3>
+                <h3 className="font-bold text-white text-base">Open Maintenance Work Order</h3>
               </div>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600"><span className="material-symbols-outlined">close</span></button>
+              <button onClick={() => setIsModalOpen(false)} className="text-slate-500 hover:text-slate-300">
+                <span className="material-symbols-outlined">close</span>
+              </button>
             </div>
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              {formError && <div className="bg-red-50 text-red-700 text-xs p-3 rounded-lg border border-red-100">{formError}</div>}
-              {formSuccess && <div className="bg-emerald-50 text-emerald-700 text-xs p-3 rounded-lg border border-emerald-100">{formSuccess}</div>}
+            <form onSubmit={handleSubmit} className="p-6 space-y-4 text-slate-300">
+              {formError && <div className="bg-red-500/5 text-red-400 text-xs p-3 rounded-lg border border-red-500/20">{formError}</div>}
+              {formSuccess && <div className="bg-emerald-500/5 text-emerald-400 text-xs p-3 rounded-lg border border-emerald-500/20">{formSuccess}</div>}
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Vehicle *</label>
+                <label className="block text-xs font-semibold text-slate-400 mb-1">Vehicle *</label>
                 <select
                   value={vehicleId}
                   onChange={(e) => setVehicleId(e.target.value)}
-                  className="w-full rounded-lg border-slate-200 text-sm focus:border-teal-500 focus:ring-teal-500"
+                  className="w-full rounded-lg border-slate-800 text-sm focus:border-accent focus:ring-accent"
                   required
                 >
                   <option value="">Select Vehicle</option>
@@ -282,44 +286,44 @@ export default function Maintenance() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Service Description *</label>
+                <label className="block text-xs font-semibold text-slate-400 mb-1">Service Description *</label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={3}
                   placeholder="e.g. Full engine overhaul, brake replacement, tire rotation..."
-                  className="w-full rounded-lg border-slate-200 text-sm focus:border-teal-500 focus:ring-teal-500"
+                  className="w-full rounded-lg border-slate-800 text-sm focus:border-accent focus:ring-accent"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Estimated Cost (₹) *</label>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1">Estimated Cost (₹) *</label>
                   <input
                     type="number"
                     value={cost}
                     onChange={(e) => setCost(e.target.value)}
                     placeholder="e.g. 1500"
-                    className="w-full rounded-lg border-slate-200 text-sm focus:border-teal-500 focus:ring-teal-500"
+                    className="w-full rounded-lg border-slate-800 text-sm focus:border-accent focus:ring-accent"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Service Date *</label>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1">Service Date *</label>
                   <input
                     type="date"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
-                    className="w-full rounded-lg border-slate-200 text-sm focus:border-teal-500 focus:ring-teal-500"
+                    className="w-full rounded-lg border-slate-800 text-sm focus:border-accent focus:ring-accent"
                     required
                   />
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-slate-200 flex justify-end gap-2">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 border border-slate-200 text-slate-600 text-sm font-semibold rounded-lg hover:bg-slate-50 transition-colors">Cancel</button>
-                <button type="submit" className="px-4 py-2 bg-teal-500 hover:bg-teal-400 text-slate-950 text-sm font-bold rounded-lg transition-colors shadow-lg shadow-teal-500/20">Open Work Order</button>
+              <div className="pt-4 border-t border-slate-850 flex justify-end gap-2">
+                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 border border-slate-800 text-slate-400 text-sm font-semibold rounded-lg hover:bg-slate-900 transition-colors">Cancel</button>
+                <button type="submit" className="px-4 py-2 bg-accent hover:bg-accent-hover text-slate-950 text-sm font-bold rounded-lg transition-colors shadow-lg shadow-accent/25">Open Work Order</button>
               </div>
             </form>
           </div>
@@ -329,34 +333,34 @@ export default function Maintenance() {
       {/* ── Edit Modal ── */}
       {isEditOpen && editLog && (
         <div
-          className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4"
           onClick={e => e.target === e.currentTarget && setIsEditOpen(false)}
         >
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full border border-slate-200 overflow-hidden">
+          <div className="bg-slate-950 border border-slate-800 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden flex flex-col">
             {/* Header */}
-            <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+            <div className="px-6 py-5 border-b border-slate-800 flex items-center justify-between bg-slate-900/40">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-amber-50 rounded-xl flex items-center justify-center">
-                  <span className="material-symbols-outlined text-amber-600">edit_note</span>
+                <div className="w-9 h-9 bg-accent/10 rounded-xl flex items-center justify-center border border-accent/20">
+                  <span className="material-symbols-outlined text-accent font-bold">edit_note</span>
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-800">Edit Maintenance Log</h3>
+                  <h3 className="font-bold text-white text-base">Edit Maintenance Log</h3>
                   <p className="text-xs text-slate-400">
-                    {editLog.vehicle_name} · <span className="font-mono">{editLog.registration_number}</span>
+                    {editLog.vehicle_name} · <span className="font-mono text-slate-500">{editLog.registration_number}</span>
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setIsEditOpen(false)}
-                className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-200 text-slate-400 hover:text-slate-600 transition-colors"
+                className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-905 text-slate-500 hover:text-slate-300 transition-colors"
               >
                 <span className="material-symbols-outlined text-xl">close</span>
               </button>
             </div>
 
-            <form onSubmit={handleEditSubmit} className="p-6 space-y-4">
+            <form onSubmit={handleEditSubmit} className="p-6 space-y-4 text-slate-300">
               {editError && (
-                <div className="bg-red-50 border border-red-200 text-red-700 text-sm p-3 rounded-xl flex items-center gap-2">
+                <div className="bg-red-500/5 border border-red-500/20 text-red-400 text-sm p-3 rounded-xl flex items-center gap-2">
                   <span className="material-symbols-outlined text-base flex-shrink-0">error</span>
                   {editError}
                 </div>
@@ -364,23 +368,23 @@ export default function Maintenance() {
 
               {/* Description */}
               <div>
-                <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-widest">Service Description *</label>
+                <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-widest">Service Description *</label>
                 <textarea
                   value={editDescription}
                   onChange={e => setEditDescription(e.target.value)}
                   rows={4}
                   required
                   placeholder="Describe the maintenance work..."
-                  className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 outline-none transition-all resize-none"
+                  className="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all resize-none text-slate-200"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 {/* Cost */}
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-widest">Cost (₹) *</label>
+                  <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-widest">Cost (₹) *</label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-base">payments</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-500 text-base">payments</span>
                     <input
                       type="number"
                       value={editCost}
@@ -388,35 +392,35 @@ export default function Maintenance() {
                       required
                       min="0"
                       placeholder="0"
-                      className="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-3 text-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 outline-none transition-all"
+                      className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-sm focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all text-slate-200"
                     />
                   </div>
                 </div>
 
                 {/* Date */}
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-widest">Service Date *</label>
+                  <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-widest">Service Date *</label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-base">calendar_month</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-500 text-base">calendar_month</span>
                     <input
                       type="date"
                       value={editDate}
                       onChange={e => setEditDate(e.target.value)}
                       required
-                      className="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-3 text-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 outline-none transition-all"
+                      className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-sm focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all text-slate-200"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Status badge (read-only info) */}
-              <div className="flex items-center gap-2 bg-slate-50 rounded-xl px-4 py-3 text-sm text-slate-600 border border-slate-100">
-                <span className="material-symbols-outlined text-base text-slate-400">info</span>
+              <div className="flex items-center gap-2 bg-slate-900/60 rounded-xl px-4 py-3 text-sm text-slate-400 border border-slate-805">
+                <span className="material-symbols-outlined text-base text-slate-500">info</span>
                 Status:
-                <span className={`ml-1 text-[11px] font-bold px-2 py-0.5 rounded-full border ${editLog.status === 'active' ? 'bg-amber-100 text-amber-800 border-amber-200' : 'bg-emerald-100 text-emerald-800 border-emerald-200'}`}>
+                <span className={`ml-1 text-[11px] font-bold px-2 py-0.5 rounded-full border ${editLog.status === 'active' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'}`}>
                   {editLog.status === 'active' ? 'In Shop' : 'Closed'}
                 </span>
-                <span className="text-xs text-slate-400 ml-1">(status not changed here)</span>
+                <span className="text-xs text-slate-500 ml-1">(status not changed here)</span>
               </div>
 
               {/* Actions */}
@@ -424,19 +428,19 @@ export default function Maintenance() {
                 <button
                   type="button"
                   onClick={() => setIsEditOpen(false)}
-                  className="flex-1 border border-slate-200 text-slate-600 font-semibold py-3 rounded-xl text-sm hover:bg-slate-50 transition-colors"
+                  className="flex-1 border border-slate-800 text-slate-450 font-semibold py-3 rounded-xl text-sm hover:bg-slate-900 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={editLoading}
-                  className="flex-1 bg-amber-500 hover:bg-amber-400 text-white font-bold py-3 rounded-xl text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20"
+                  className="flex-1 bg-accent hover:bg-accent-hover text-slate-950 font-bold py-3 rounded-xl text-sm transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-accent/25 hover:scale-[1.01]"
                 >
                   {editLoading ? (
                     <><span className="material-symbols-outlined animate-spin text-base">sync</span> Saving…</>
                   ) : (
-                    <><span className="material-symbols-outlined text-base">save</span> Save Changes</>
+                    <><span className="material-symbols-outlined text-base font-bold">save</span> Save Changes</>
                   )}
                 </button>
               </div>
